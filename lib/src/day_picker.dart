@@ -37,6 +37,7 @@ class DayPicker extends StatelessWidget {
       this.selectedPageDate,
       this.onVisibleMonthChanged,
       this.monthPageDate,
+      this.isFullWidth = false,
       this.showHeaderNavigation = false,
       })
       : assert(selectedDate != null),
@@ -89,6 +90,9 @@ class DayPicker extends StatelessWidget {
   /// show header navigation.
   final bool showHeaderNavigation;
 
+  /// show full width.
+  final bool isFullWidth;
+
   @override
   Widget build(BuildContext context){
     print('selectableDayPredicate --------- $selectableDayPredicate');
@@ -111,6 +115,7 @@ class DayPicker extends StatelessWidget {
       datePickerStyles: datePickerStyles,
       datePickerKeys: datePickerKeys,
       eventDecorationBuilder: eventDecorationBuilder,
+      isFullWidth: isFullWidth,
       showHeaderNavigation: showHeaderNavigation,
     );
   }

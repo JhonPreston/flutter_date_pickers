@@ -49,6 +49,9 @@ class DayBasedChangablePicker<T> extends StatefulWidget{
   /// show header navigation
   final bool showHeaderNavigation;
 
+  ///full width
+  final bool isFullWidth;
+
   /// Logic for date selections.
   final ISelectablePicker selectablePicker;
 
@@ -72,6 +75,7 @@ class DayBasedChangablePicker<T> extends StatefulWidget{
     this.selectablePicker,
     this.onSelectionError,
     this.eventDecorationBuilder,
+    this.isFullWidth = false,
     this.showHeaderNavigation = false
   }) : assert(datePickerLayoutSettings != null),
        assert(datePickerStyles != null),
@@ -150,7 +154,7 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: widget.datePickerLayoutSettings.monthPickerPortraitWidth,
+      width: widget.isFullWidth ? null : widget.datePickerLayoutSettings.monthPickerPortraitWidth,
       height: widget.datePickerLayoutSettings.maxDayPickerHeight,
       child: Column(
         children: <Widget>[
