@@ -33,7 +33,12 @@ class DayPicker extends StatelessWidget {
       this.datePickerStyles = const DatePickerRangeStyles(),
       this.datePickerKeys,
       this.selectableDayPredicate,
-      this.eventDecorationBuilder})
+      this.eventDecorationBuilder,
+      this.selectedPageDate,
+      this.onVisibleMonthChanged,
+      this.monthPageDate,
+      this.showHeaderNavigation = false,
+      })
       : assert(selectedDate != null),
         assert(onChanged != null),
         assert(!firstDate.isAfter(lastDate)),
@@ -47,8 +52,15 @@ class DayPicker extends StatelessWidget {
   /// This date is highlighted in the picker.
   final DateTime selectedDate;
 
+  final DateTime monthPageDate;
+
+  /// This date is show page in the picker.
+  final DateTime selectedPageDate;
+
   /// Called when the user picks a day.
   final ValueChanged<DateTime> onChanged;
+
+  final ValueChanged<DateTime> onVisibleMonthChanged;
 
   /// The earliest date the user is permitted to pick.
   final DateTime firstDate;
@@ -74,8 +86,12 @@ class DayPicker extends StatelessWidget {
   /// except days with dayType is [DayType.notSelected].
   final EventDecorationBuilder eventDecorationBuilder;
 
+  /// show header navigation.
+  final bool showHeaderNavigation;
+
   @override
   Widget build(BuildContext context){
+    print('selectableDayPredicate --------- $selectableDayPredicate');
     ISelectablePicker<DateTime> daySelectablePicker = DaySelectable(
       selectedDate,
       firstDate,
@@ -86,13 +102,16 @@ class DayPicker extends StatelessWidget {
     return DayBasedChangablePicker<DateTime>(
       selectablePicker: daySelectablePicker,
       selectedDate: selectedDate,
+      monthPageDate: monthPageDate,
       firstDate: firstDate,
       lastDate: lastDate,
       onChanged: onChanged,
+      onVisibleMonthChanged: onVisibleMonthChanged,
       datePickerLayoutSettings: datePickerLayoutSettings,
       datePickerStyles: datePickerStyles,
       datePickerKeys: datePickerKeys,
       eventDecorationBuilder: eventDecorationBuilder,
+      showHeaderNavigation: showHeaderNavigation,
     );
   }
 }

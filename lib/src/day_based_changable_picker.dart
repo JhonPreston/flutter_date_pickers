@@ -10,17 +10,23 @@ import 'package:flutter_date_pickers/src/month_navigation_row.dart';
 import 'package:flutter_date_pickers/src/semantic_sorting.dart';
 import 'package:flutter_date_pickers/src/typedefs.dart';
 import 'package:flutter_date_pickers/src/utils.dart';
+import 'package:flutter_date_pickers/src/date_picker_mixin.dart';
 
 /// Date picker based on [DayBasedPicker] picker (for days, weeks, ranges).
 /// Allows select previous/next month.
-class DayBasedChangablePicker<T> extends StatefulWidget {
+class DayBasedChangablePicker<T> extends StatefulWidget{
   /// The currently selected date.
   ///
   /// This date is highlighted in the picker.
   final DateTime selectedDate;
 
+  final DateTime monthPageDate;
+
   /// Called when the user picks a new T.
   final ValueChanged<T> onChanged;
+
+  /// Called when the user picks a new T.
+  final ValueChanged<DateTime> onVisibleMonthChanged;
 
   /// Called when the error was thrown after user selection.
   final OnSelectionError onSelectionError;
@@ -40,6 +46,9 @@ class DayBasedChangablePicker<T> extends StatefulWidget {
   /// Some keys useful for integration tests
   final DatePickerKeys datePickerKeys;
 
+  /// show header navigation
+  final bool showHeaderNavigation;
+
   /// Logic for date selections.
   final ISelectablePicker selectablePicker;
 
@@ -52,7 +61,9 @@ class DayBasedChangablePicker<T> extends StatefulWidget {
   const DayBasedChangablePicker({
     Key key,
     this.selectedDate,
+    this.monthPageDate,
     this.onChanged,
+    this.onVisibleMonthChanged,
     this.firstDate,
     this.lastDate,
     @required this.datePickerLayoutSettings,
@@ -60,7 +71,8 @@ class DayBasedChangablePicker<T> extends StatefulWidget {
     this.datePickerKeys,
     this.selectablePicker,
     this.onSelectionError,
-    this.eventDecorationBuilder
+    this.eventDecorationBuilder,
+    this.showHeaderNavigation = false
   }) : assert(datePickerLayoutSettings != null),
        assert(datePickerStyles != null),
        super(key: key);
@@ -70,7 +82,7 @@ class DayBasedChangablePicker<T> extends StatefulWidget {
 }
 
 
-class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>> {
+class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>  with CommonDatePickerFunctions {
   MaterialLocalizations localizations;
   TextDirection textDirection;
 
@@ -97,7 +109,8 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
   void initState() {
     super.initState();
     // Initially display the pre-selected date.
-    final int monthPage = DatePickerUtils.monthDelta(widget.firstDate, widget.selectedDate);
+//    final int monthPage = DatePickerUtils.monthDelta(widget.firstDate, widget.selectedDate);
+    final int monthPage = DatePickerUtils.monthDelta(widget.firstDate, widget.monthPageDate ?? widget.selectedDate);
     _dayPickerController = PageController(initialPage: monthPage);
     _handleMonthPageChanged(monthPage);
     _updateCurrentDate();
@@ -108,6 +121,12 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
     super.didUpdateWidget(oldWidget);
     if (widget.selectedDate != oldWidget.selectedDate) {
       final int monthPage = DatePickerUtils.monthDelta(widget.firstDate, widget.selectedDate);
+      _dayPickerController = PageController(initialPage: monthPage);
+      _handleMonthPageChanged(monthPage);
+    }
+
+    if (widget.monthPageDate != oldWidget.monthPageDate) {
+      final int monthPage = DatePickerUtils.monthDelta(widget.firstDate, widget.monthPageDate);
       _dayPickerController = PageController(initialPage: monthPage);
       _handleMonthPageChanged(monthPage);
     }
@@ -123,7 +142,6 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
     super.didChangeDependencies();
     localizations = MaterialLocalizations.of(context);
     textDirection = Directionality.of(context);
-
     final ThemeData theme = Theme.of(context);
     _resultStyles = widget.datePickerStyles.fulfillWithTheme(theme);
   }
@@ -136,34 +154,38 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
       height: widget.datePickerLayoutSettings.maxDayPickerHeight,
       child: Column(
         children: <Widget>[
-          SizedBox(
-            height: widget.datePickerLayoutSettings.dayPickerRowHeight,
-            child: Padding(
-              padding: widget.datePickerLayoutSettings.contentPadding, //match _DayPicker main layout padding
-              child: MonthNavigationRow(
-                previousPageIconKey: widget.datePickerKeys?.previousPageIconKey,
-                nextPageIconKey: widget.datePickerKeys?.nextPageIconKey,
-                previousMonthTooltip: _isDisplayingFirstMonth
-                    ? null
-                    : '${localizations.previousMonthTooltip} ${localizations.formatMonthYear(_previousMonthDate)}',
-                nextMonthTooltip: _isDisplayingLastMonth
-                    ? null
-                    : '${localizations.nextMonthTooltip} ${localizations.formatMonthYear(_nextMonthDate)}',
-                onPreviousMonthTapped: _handlePreviousMonth,
-                onNextMonthTapped: _handleNextMonth,
-                title: Text(
-                  localizations.formatMonthYear(_currentDisplayedMonthDate),
-                  key: widget.datePickerKeys?.selectedPeriodKeys,
-                  style: _resultStyles.displayedPeriodTitle,
+          widget.showHeaderNavigation ?
+            SizedBox(
+              height: widget.datePickerLayoutSettings.dayPickerRowHeight,
+              child: Padding(
+                padding: widget.datePickerLayoutSettings.contentPadding, //match _DayPicker main layout padding
+                child: MonthNavigationRow(
+                  previousPageIconKey: widget.datePickerKeys?.previousPageIconKey,
+                  nextPageIconKey: widget.datePickerKeys?.nextPageIconKey,
+                  previousMonthTooltip: _isDisplayingFirstMonth
+                      ? null
+                      : '${localizations.previousMonthTooltip} ${localizations.formatMonthYear(_previousMonthDate)}',
+                  nextMonthTooltip: _isDisplayingLastMonth
+                      ? null
+                      : '${localizations.nextMonthTooltip} ${localizations.formatMonthYear(_nextMonthDate)}',
+                  onPreviousMonthTapped: _handlePreviousMonth,
+                  onNextMonthTapped: _handleNextMonth,
+                  title: Text(
+                    localizations.formatMonthYear(_currentDisplayedMonthDate),
+                    key: widget.datePickerKeys?.selectedPeriodKeys,
+                    style: _resultStyles.displayedPeriodTitle,
+                  ),
                 ),
               ),
-            ),
-          ),
+            )
+          : Container(),
+          _buildWeekDaysMark(),
+          SizedBox(height: 2,),
           Expanded(
             child: Semantics(
               sortKey: MonthPickerSortKey.calendar,
               child: PageView.builder(
-                key: ValueKey<DateTime>(widget.selectedDate),
+                key: ValueKey<DateTime>(widget.monthPageDate ?? widget.selectedDate),
                 controller: _dayPickerController,
                 scrollDirection: Axis.horizontal,
                 itemCount: DatePickerUtils.monthDelta(widget.firstDate, widget.lastDate) + 1,
@@ -197,14 +219,50 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
     });
   }
 
+  Widget _buildWeekDaysMark(){
+    final ThemeData themeData = Theme.of(context);
+    final List<Widget> labels = <Widget>[];
+    labels.addAll(getDayHeaders(themeData.textTheme.caption, localizations));
+
+    return Container(
+        height: 58.0,
+        padding: widget.datePickerLayoutSettings.contentPadding,
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(width: 1.0, color: Color.fromRGBO(
+                209,
+                209,
+                209,
+                0.5
+            )),
+            bottom: BorderSide(width: 1.0, color: Color.fromRGBO(
+                209,
+                209,
+                209,
+                0.5
+            )),
+          ),
+        ),
+        child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(labels?.length ?? 0, (index) =>
+          Expanded(
+            child: labels[index],
+          )
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildCalendar(BuildContext context, int index) {
     final DateTime targetDate = DatePickerUtils.addMonthsToMonthDate(widget.firstDate, index);
 
     widget.selectablePicker.onUpdate
         .listen((newSelectedDate) => widget.onChanged(newSelectedDate))
         .onError((e) => widget.onSelectionError != null
-          ? widget.onSelectionError(e)
-          : print(e.toString()));
+        ? widget.onSelectionError(e)
+        : print(e.toString()));
 
     return DayBasedPicker(
       key: ValueKey<DateTime>(targetDate),
@@ -219,6 +277,7 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
       eventDecorationBuilder: widget.eventDecorationBuilder,
     );
   }
+
 
   void _handleNextMonth() {
     if (!_isDisplayingLastMonth) {
@@ -248,5 +307,8 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
           DatePickerUtils.addMonthsToMonthDate(widget.firstDate, monthPage);
       _nextMonthDate = DatePickerUtils.addMonthsToMonthDate(widget.firstDate, monthPage + 1);
     });
+    if(widget.onVisibleMonthChanged != null){
+      widget.onVisibleMonthChanged(_currentDisplayedMonthDate);
+    }
   }
 }

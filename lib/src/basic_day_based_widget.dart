@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:flutter_date_pickers/src/date_picker_mixin.dart';
@@ -91,7 +93,7 @@ class DayBasedPicker<T> extends StatelessWidget with CommonDatePickerFunctions{
     final int firstDayOffset = computeFirstDayOffset(year, month, localizations);
 
     final List<Widget> labels = <Widget>[];
-    labels.addAll(getDayHeaders(themeData.textTheme.caption, localizations));
+//    labels.addAll(getDayHeaders(themeData.textTheme.caption, localizations));
 
     for (int i = 0; true; i += 1) {
       // 1-based day of month, e.g. 1-31 for January, and 1-29 for February on
@@ -121,11 +123,25 @@ class DayBasedPicker<T> extends StatelessWidget with CommonDatePickerFunctions{
           // The selected day gets a circle background highlight, and a contrasting text color by default.
           itemStyle = datePickerStyles?.selectedDateStyle;
           decoration = _getSelectedDecoration(dayType);
-        } else if (dayType == DayType.disabled) {
+        }
+        else if (dayType == DayType.disabled) {
           itemStyle = datePickerStyles.disabledDateStyle;
         } else if (DatePickerUtils.sameDate(currentDate, dayToBuild)) {
           // The current day gets a different text color.
           itemStyle = datePickerStyles.currentDateStyle;
+//          itemStyle = TextStyle(color: Colors.yellow);
+
+//          EventDecoration eDecoration = eventDecorationBuilder(dayToBuild);
+          if(Platform.isIOS){
+            decoration = BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+              ),
+//              borderRadius: BorderRadius.all(Radius.circular(100.0)),
+              shape: BoxShape.circle,
+            );
+          }
+
         } else {
           itemStyle = datePickerStyles.defaultDateTextStyle;
         }

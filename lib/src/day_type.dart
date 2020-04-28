@@ -4,5 +4,6 @@ enum DayType {
   end,
   single,
   disabled,
-  notSelected
+  notSelected,
+//  weekend
 }

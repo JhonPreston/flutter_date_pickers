@@ -111,11 +111,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 }
 
 final List<Event> events = [
-  Event(DateTime.now(), "Today event"),
+//  Event(DateTime.now(), "Today event"),
   Event(DateTime.now().subtract(Duration(days: 3)), "Ev1"),
   Event(DateTime.now().subtract(Duration(days: 13)), "Ev2"),
   Event(DateTime.now().subtract(Duration(days: 30)), "Ev3"),
   Event(DateTime.now().add(Duration(days: 3)), "Ev4"),
-  Event(DateTime.now().add(Duration(days: 13)), "Ev5"),
+  Event(DateTime.now().add(Duration(days: 12)), "Ev5"),
   Event(DateTime.now().add(Duration(days: 30)), "Ev6"),
 ];
