@@ -135,7 +135,7 @@ class DayBasedPicker<T> extends StatelessWidget with CommonDatePickerFunctions{
           if(Platform.isIOS){
             decoration = BoxDecoration(
               border: Border.all(
-                color: Colors.black,
+                color: datePickerStyles.currentDateStyle.color,
               ),
 //              borderRadius: BorderRadius.all(Radius.circular(100.0)),
               shape: BoxShape.circle,

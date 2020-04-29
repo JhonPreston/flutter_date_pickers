@@ -233,18 +233,8 @@ class _DayBasedChangablePickerState<T> extends State<DayBasedChangablePicker<T>>
         padding: widget.datePickerLayoutSettings.contentPadding,
         decoration: BoxDecoration(
           border: Border(
-            top: BorderSide(width: 1.0, color: Color.fromRGBO(
-                209,
-                209,
-                209,
-                0.5
-            )),
-            bottom: BorderSide(width: 1.0, color: Color.fromRGBO(
-                209,
-                209,
-                209,
-                0.5
-            )),
+            top: BorderSide(width: 1.0, color: Color(0xff999999)),
+            bottom: BorderSide(width: 1.0, color: Color(0xff999999)),
           ),
         ),
         child: Row(
