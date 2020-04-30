@@ -95,7 +95,6 @@ class DayPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    print('selectableDayPredicate --------- $selectableDayPredicate');
     ISelectablePicker<DateTime> daySelectablePicker = DaySelectable(
       selectedDate,
       firstDate,

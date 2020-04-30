@@ -33,7 +33,8 @@ class _DayPickerPageState extends State<DayPickerPage> {
   void initState() {
     super.initState();
 
-    _selectedDate = DateTime.now();
+    _selectedDate = DateTime(-1,0,0);
+//    _selectedDate = DateTime.now();
     _monthPageDate = DateTime.now();
     _firstDate = DateTime.now().subtract(Duration(days: 9843759834675931));
     _lastDate = DateTime.now().add(Duration(days: 9843759834675931));
@@ -85,7 +86,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
             selectedDate: _selectedDate,
             monthPageDate: _monthPageDate,
             onChanged: _onSelectedDateChanged,
-            onVisibleMonthChanged: (date) {print('onPageChanged --> $date');},
+//            onVisibleMonthChanged: (date) {print('onPageChanged --> $date');},
             firstDate: _firstDate,
             lastDate: _lastDate,
             datePickerStyles: styles,
